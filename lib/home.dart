@@ -1,34 +1,24 @@
 import 'package:flutter/material.dart';
-import 'package:encrypt/encrypt.dart' as encrypt;
-import 'package:qr_flutter/qr_flutter.dart';
 
-class EncryptionScreen extends StatefulWidget {
-  const EncryptionScreen({super.key});
+import 'encryptionScreen.dart';
+
+class HomeScreen extends StatefulWidget {
+  const HomeScreen({super.key});
   @override
-  State<EncryptionScreen> createState() => _EncryptionScreenState();
+  State<HomeScreen> createState() => _HomeScreenState();
 }
 
-class _EncryptionScreenState extends State<EncryptionScreen> {
-  final TextEditingController _keyControl = TextEditingController();
-  final TextEditingController _valControl = TextEditingController();
-  String _encryptedValue = '';
+class _HomeScreenState extends State<HomeScreen> {
+  void _navToCreate() {
+    Navigator.of(context).push(
+    MaterialPageRoute(
+      builder: (context) => const EncryptionScreen(),
+    ),
+  );
+  }
 
-  void _encryptText(String val) {
-    final keyStr = _keyControl.text;
-    final valStr = _valControl.text;
-
-    if (keyStr.isNotEmpty && valStr.isNotEmpty) {
-      final key = encrypt.Key.fromUtf8(keyStr.padRight(32, ' '));
-      final iv = encrypt.IV.fromLength(16);
-      final encrypter = encrypt.Encrypter(encrypt.AES(key));
-
-      final encrypted = encrypter.encrypt(valStr, iv: iv);
-      
-        _encryptedValue = encrypted.base64;
-    }
+  void _navToScan() {
     
-      setState(() {
-      });
   }
 
   @override
@@ -41,30 +31,15 @@ class _EncryptionScreenState extends State<EncryptionScreen> {
         padding: const EdgeInsets.all(16.0),
         child: Column(
           children: <Widget>[
-            TextField(
-              controller: _keyControl,
-              onChanged: _encryptText,
-              decoration: const InputDecoration(labelText: 'Encryption Key'),
+            FilledButton.tonal(
+              onPressed: _navToCreate,
+              child: const Text('Create'),
             ),
-            TextField(
-              controller: _valControl,
-              onChanged: _encryptText,
-              decoration: const InputDecoration(labelText: 'Text to encrypt'),
+            SizedBox(height: 10),
+            FilledButton.tonal(
+              onPressed: _navToScan,
+              child: const Text('Scan'),
             ),
-            //SizedBox(height: 20),
-            //ElevatedButton(onPressed:  _encryptText, child: Text('Encrypt')),
-            /* const Text('Encrypted text:'),
-            const SizedBox(
-              height: 10,
-            ),
-            SelectableText(_encryptedValue,
-                style: TextStyle(fontWeight: FontWeight.bold)), */
-            if (_keyControl.text.isNotEmpty && _valControl.text.isNotEmpty)
-              QrImageView(
-                data: _encryptedValue,
-                version: QrVersions.auto,
-                size: 200.0,
-              ),
           ],
         ),
       ),
